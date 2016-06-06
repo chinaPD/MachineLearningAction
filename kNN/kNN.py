@@ -53,6 +53,7 @@ def autoNorm(dataSet):
     return normDataSet, ranges, minVals
 
 
+
 if __name__ == '__main__':
     group, label = createDataSet()
     # print group, label

@@ -53,16 +53,49 @@ def autoNorm(dataSet):
     return normDataSet, ranges, minVals
 
 
+def datingClassTest():
+    hoRatio = 0.10
+    datingDatMat, datingLabels = file2matrix('datingTestSet2.txt')
+    normMat, ranges, minVals = autoNorm(datingDatMat)
+    m = normMat.shape[0]
+    numTestVecs = int(m * hoRatio)
+    errorCount = 0.0
+    for i in range(numTestVecs):
+        classifierResult = classify0(normMat[i, :], normMat[numTestVecs:m, :],
+                                     datingLabels[numTestVecs:m], 3)
+        print "the classifier came back with: %d, the real answer is: %d" \
+              % (classifierResult, datingLabels[i])
+        if (classifierResult != datingLabels[i]): errorCount += 1.0
+    print "the total error rate is:%f" % (errorCount/float(numTestVecs))
+
+
+def classifyPerson():
+    resultList = ['not at all', 'in small doses', 'in large doses']
+    percentTats = float(raw_input("percentage of time spent playing video games?"))
+    ffMiles = float(raw_input("frequent flier miles earned per year?"))
+    iceCream = float(raw_input("liters of ice cream consumed per year?"))
+    datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+    inArr = array([ffMiles, percentTats, iceCream])
+    classifierResult = classify0(inArr, datingDataMat, datingLabels, 3)
+    print "You will probably like this person: ", resultList[classifierResult - 1]
+
 
 if __name__ == '__main__':
-    group, label = createDataSet()
+    # group, label = createDataSet()
     # print group, label
     # print classify0([0,0], group, label, 3)
-    datingDatMat, datingLabels = file2matrix('datingTestSet2.txt')
-    print datingDatMat
-    print datingLabels
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.scatter(datingDatMat[:, 1], datingDatMat[:, 2],
-               15.0 * array(datingLabels), 15.0 * array(datingLabels))
-    plt.show()
+    # datingDatMat, datingLabels = file2matrix('datingTestSet2.txt')
+    # print datingDatMat
+    # print datingLabels
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111)
+    # ax.scatter(datingDatMat[:, 1], datingDatMat[:, 2],
+    #            15.0 * array(datingLabels), 15.0 * array(datingLabels))
+    # plt.show()
+    # normDataSet, ranges, minVals = autoNorm(datingDatMat)
+    # print normDataSet
+    # print ranges
+    # print minVals
+    # datingClassTest()
+    classifyPerson()

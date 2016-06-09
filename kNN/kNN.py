@@ -2,6 +2,7 @@ from numpy import *
 import matplotlib
 import matplotlib.pyplot as plt
 import operator
+from os import listdir
 
 
 def createDataSet():
@@ -66,7 +67,7 @@ def datingClassTest():
         print "the classifier came back with: %d, the real answer is: %d" \
               % (classifierResult, datingLabels[i])
         if (classifierResult != datingLabels[i]): errorCount += 1.0
-    print "the total error rate is:%f" % (errorCount/float(numTestVecs))
+    print "the total error rate is:%f" % (errorCount / float(numTestVecs))
 
 
 def classifyPerson():
@@ -79,6 +80,44 @@ def classifyPerson():
     inArr = array([ffMiles, percentTats, iceCream])
     classifierResult = classify0(inArr, datingDataMat, datingLabels, 3)
     print "You will probably like this person: ", resultList[classifierResult - 1]
+
+
+def img2vector(filename):
+    returnVect = zeros((1, 1024))
+    fr = open(filename)
+    for i in range(32):
+        lineStr = fr.readline()
+        for j in range(32):
+            returnVect[0, 32 * i + j] = int(lineStr[j])
+    return returnVect
+
+
+def handwritingClassTest():
+    hwLabels = []
+    trainingFileList = listdir('trainingDigits')
+    m = len(trainingFileList)
+    trainingMat = zeros((m, 1024))
+    for i in range(m):
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
+        hwLabels.append(classNumStr)
+        trainingMat[i, :] = img2vector('trainingDigits/%s' % fileNameStr)
+    testFileList = listdir('testDigits')
+    errorCount = 0.0
+    mTest = len(testFileList)
+    for i in range(mTest):
+        fileNameStr = testFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0])
+        vectorUnderTest = img2vector('testDigits/%s' % fileNameStr)
+        classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 15)
+        print "the classifier came back with: %d, the real answer is: %d" \
+              % (classifierResult, classNumStr)
+        if (classifierResult != classNumStr): errorCount += 1.0
+    print mTest
+    print "\nthe total number of error is: %d" % errorCount
+    print "\nthe total error rate is: %f" % (errorCount / float(mTest))
 
 
 if __name__ == '__main__':
@@ -98,4 +137,8 @@ if __name__ == '__main__':
     # print ranges
     # print minVals
     # datingClassTest()
-    classifyPerson()
+    # classifyPerson()
+    # testVector = img2vector('testDigits/0_13.txt')
+    # print testVector[0, 0:31]
+    # print testVector[0, 32:63]
+    handwritingClassTest()
